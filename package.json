@@ -1,0 +1,14 @@
+{
+  "name": "sanbase",
+  "version": "1.0.0",
+  "description": "Base starter SPA vanilla Js",
+  "main": "main.js",
+  "scripts": {
+    "test": "run"
+  },
+  "keywords": [
+    "Javascript"
+  ],
+  "author": "Pamekasancode",
+  "license": "MIT"
+}
