@@ -1,4 +1,4 @@
-import "../components/Button.js"
+import "../../components/Button.js"
 
 export default class Home {
     constructor() {
