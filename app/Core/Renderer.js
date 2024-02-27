@@ -41,7 +41,7 @@ export class RootDOM {
     }
 
     init(node) {
-        this.root.appendChild(node.render(node.structure()))
+        this.root.appendChild(node.render())
         document.body.appendChild(this.root)   
     }
 
