@@ -1,7 +1,12 @@
 export default class Router {
     constructor(routes) {
         this.routes = routes;
+        this.mode = "url";
         this.init();
+    }
+
+    setMode(mode) {
+        return this.mode = mode;
     }
 
     async init() {
@@ -15,21 +20,25 @@ export default class Router {
         });
 
         window.addEventListener("popstate", () => this.handleRoute());
+        window.addEventListener("hashchange", () => this.handleRoute());
         window.addEventListener("DOMContentLoaded", () => this.handleRoute());
-        window.addEventListener("beforeunload", () => this.handleRoute())
+        window.addEventListener("beforeunload", () => this.handleRoute());
     }
 
     async handleRoute() {
-        let path = this.routes[window.location.pathname];
+        let url = window.location.hash;
+        if(url.length == 0) url = "#";
+
+        let path = this.mode == "url" ? this.routes[window.location.pathname] : this.routes[url];
 
         Object.keys(this.routes).forEach(routePath => {
-            const regex = new RegExp("^" + routePath.replace(/:\w+/g, "(.+)") + "$")
-            const match = location.pathname.match(regex)
+            const regex = new RegExp("^" + routePath.replace(/:\w+/g, "(.+)") + "$");
+            const match = this.mode == "url" ? location.pathname.match(regex) : url.match(regex);
             if (match) {
-                const params = match.slice(1)
-                const id = params[0]
-                path = this.routes[routePath]
-                path.id = id
+                const params = match.slice(1);
+                const id = params[0];
+                path = this.routes[routePath];
+                path.id = id;
             }
         })
     
@@ -39,6 +48,6 @@ export default class Router {
             return;
         }
 
-        history.replaceState("", "", "/");
+        this.mode == "url" ? history.replaceState("", "", "/") : history.replaceState("", "", "#");
     }
 }
