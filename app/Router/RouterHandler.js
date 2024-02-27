@@ -1,7 +1,8 @@
 export default class Router {
-    constructor(routes) {
+    constructor(routes, parent) {
         this.routes = routes;
         this.mode = "url";
+        this.parent;
         this.init();
     }
 

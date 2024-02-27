@@ -3,22 +3,23 @@ export class VDomNodes {
         this.state = {}
         this.tag_name = tag_name
         this.attibutes = attributes
+        this.element = document.createElement(this.tag_name)
     }
 
-    render(children) {
+    render() {
         // Create a pre-render HTML element
-        let element = document.createElement(this.tag_name)
+        let children = this.structure()
 
         // Set all user specified attributes to the element
         Object.entries(this.attibutes).forEach(([attribute, value]) => {
-            element.setAttribute(attribute, value)
+            this.element.setAttribute(attribute, value)
         })
 
 
         // Append all child into element
-        element.innerHTML = children
+        this.element.innerHTML = children
 
-        return element
+        return this.element
     }
 
 
