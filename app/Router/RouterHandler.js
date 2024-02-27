@@ -2,7 +2,7 @@ export default class Router {
     constructor(routes, parent) {
         this.routes = routes;
         this.mode = "url";
-        this.parent;
+        this.parent = parent;
         this.init();
     }
 
@@ -45,7 +45,8 @@ export default class Router {
     
         if (path) {
             document.title = path.title ? path.title : "Minibase";
-            document.getElementById("root").innerHTML = await new path.element(path.id).render();
+            // document.getElementById("root").innerHTML = await new path.element(path.id).render();
+            await this.parent.render(path.element)
             return;
         }
 

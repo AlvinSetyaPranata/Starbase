@@ -1,15 +1,16 @@
 import { VDomNodes } from "../../../app/Core/Renderer.js";
+import { Button } from "../../components/Button.js";
 
 export default class Home extends VDomNodes {
     constructor() {
         super('div', {class : "paragraf"})
-        this.data = ["Alvin", "ALvin2"]
+        this.button = new Button()
     }
 
     structure() {
         return `
             <h1>Home</h1>
-            ${this.data.map((d) => `<p>${d}</p>`).join('')}
+            ${this.button.render_as_string()}
         `
     }
 }
