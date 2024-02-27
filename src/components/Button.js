@@ -4,8 +4,9 @@ import { VDomNodes } from "../../app/Core/Renderer.js"
 export class Button extends VDomNodes {
     constructor() {
         super('button', {})
-        this.events["click"] = () => console.log("Hello worlds")
+        this.addListener('click', () => alert("Hello"))
     }
+
 
 
     structure() {
