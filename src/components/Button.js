@@ -1,27 +1,16 @@
-import { Navigate } from "../../app/Router/Navigate.js"
+import { VDomNodes } from "../../app/Core/Renderer.js"
+// import { Navigate } from "../../app/Router/Navigate.js"
 
-class Button extends HTMLElement {
+export class Button extends VDomNodes {
     constructor() {
-        super()
-        this.path = ""
-        this.handleClick = this.handleClick.bind(this)
-    }
-    
-    handleClick() {
-        Navigate(this.path)
-    }
-    
-    connectedCallback() {
-        this.path = this.getAttribute("path")
-        this.render()
+        super('button', {})
+        this.events["click"] = () => console.log("Hello worlds")
     }
 
-    render() {
-        this.innerHTML = `
-            <button>Klik</button>
-        `
-        this.querySelector("button").addEventListener("click", this.handleClick)
+
+    structure() {
+        return 'Klick'
+        // this.querySelector("button").addEventListener("click", this.handleClick)
     }
 }
 
-customElements.define("button-component", Button)
