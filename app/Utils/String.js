@@ -9,3 +9,8 @@ export function generateRandom(length) {
 
     return res
 }
+
+
+export function isDOMString(str) {
+    return /^<[^>]+>$/.test(str);
+}

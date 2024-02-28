@@ -4,13 +4,16 @@ import { Button } from "../../components/Button.js";
 export default class Home extends VDomNodes {
     constructor() {
         super('div', {class : "paragraf"})
-        this.button = new Button()
+
+        this.state = 0
+        this.button = new Button({"onclick" : () => this.setState(this.state + 1)})
     }
 
     structure() {
         return `
             <h1>Home</h1>
             ${this.button.render_as_string()}
+            <p>You called the button, ${this.state} times</p>
         `
     }
 }
