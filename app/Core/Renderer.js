@@ -1,5 +1,5 @@
 import { getTempVar, addTempVar } from "../Utils/Cache.js"
-import { generateRandom, isDOMString } from "../Utils/String.js"
+import { generateRandom } from "../Utils/String.js"
 
 addTempVar("_sb_temp_events_", {})
 
@@ -68,14 +68,16 @@ export class VDomNodes {
         
 
         // Set all user specified attributes to the element
-        Object.entries(this.attributes).forEach(([attribute, value]) => {
-            if (attribute == "onclick") {
-                this.addListener("click", value)
-            } else {
-                this.element.setAttribute(attribute, value)
-            }
-
-        })
+        if (this.attributes) {
+            Object.entries(this.attributes).forEach(([attribute, value]) => {
+                if (attribute == "onclick") {
+                    this.addListener("click", value)
+                } else {
+                    this.element.setAttribute(attribute, value)
+                }
+    
+            })
+        }
 
         // Append all child into element
         this.element.innerHTML = children
@@ -103,11 +105,14 @@ export class RootDOM {
     }
     
     render(node) {
+        // console.log("Hello");
+
+        this.root.innerHTML = ""
         this.root.appendChild(node.render())
-        document.body.appendChild(this.root)   
+
+        document.body.innerHTML = ""
+        document.body.appendChild(this.root)
+        
         registerEvent()
     }
 }
-
-
-// Use trandition event handler
