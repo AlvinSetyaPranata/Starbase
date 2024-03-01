@@ -28,6 +28,8 @@ const routes = {
 }
 
 
+
+// Don't modify code bellow !
 export const app = new RootDOM()
 export const route = new Router(routes, app)
 
