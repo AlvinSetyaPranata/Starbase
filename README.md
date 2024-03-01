@@ -13,14 +13,14 @@ Starbase, is stands-for starter base library which helps developers to create a 
 This library requires server to make it works
 
 - Just simply clone this library and put it inside of your static folder
-- Configure your server to listen to the **\*** this will prevent the page from being re-request to the server, because it's already handled by starbase router
+- Configure your server to listen to the (**\***) this will prevent the page from being re-request to the server, because it's already handled by starbase router
 
 ## Examples
 
-first it to make a folder called components inside your src folder, dont modify the code that already commented inside the main.js!
+first it to make a folder called components inside your src folder, **dont modify the code that already commented inside the main.js!**
 
 **src/components/Button.js**
-```
+```js
 import { VDomNodes } from "../../app/Core/Renderer.js"
 
 export class Button extends VDomNodes {
@@ -39,7 +39,7 @@ export class Button extends VDomNodes {
 
 and then we need a simple page component
 **src/pages/Home.js**
-```
+```js
 import { VDomNodes } from "../../../app/Core/Renderer.js";
 import { Navigate } from "../../../app/Router/Navigate.js";
 import { Button } from "../../components/Button.js";
@@ -67,7 +67,7 @@ export default class Home extends VDomNodes {
 ```
 
 Dont forget to load the javascript inside the index.html file
-```
+```html
 <body>
     <script src="./src/main.js" type="module"></script>
 </body>
