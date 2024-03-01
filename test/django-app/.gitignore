@@ -1,0 +1,6 @@
+bin
+lib
+*.sqlite3
+*.db
+*.cfg
+**/__pycache__
