@@ -4,7 +4,7 @@ Starbase, is stands-for starter base library which helps developers to create a 
 
 * **Simplex** Simple but complex, starbase is simple to use that can handle a complext UI structure, this helps developer maintains their UI more easily
 * **Cross Frameworks** you can use starbase accross all frameworks, just simply put it in your js folder that is inside your static folder
-* **NEBV** (Not-Elegant-But-Valuable), startbase for everyone especially for developers who still want to use vanilla JS as their frontend but want to have a advanced features
+* **NEBV** (Not-Elegant-But-Valuable), startbase for everyone especially for developers who still want to use vanilla JS as their frontend but want to have an advanced features
 
 
 ## Installation
