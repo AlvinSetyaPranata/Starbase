@@ -26,8 +26,6 @@ export default class Router {
     }
 
     async handleRoute() {
-        console.log("Hello");
-
         let url = window.location.hash;
 
         if(url.length == 0) url = "#";

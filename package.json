@@ -1,5 +1,5 @@
 {
-  "name": "sanbase",
+  "name": "starbase",
   "version": "1.0.0",
   "description": "Base starter SPA vanilla Js",
   "main": "main.js",
@@ -7,8 +7,10 @@
     "test": "run"
   },
   "keywords": [
-    "Javascript"
+    "Javascript",
+    "SPA",
+    "Vanilla"
   ],
   "author": "Pamekasancode",
-  "license": "MIT"
+  "license": "UNLICENSED"
 }

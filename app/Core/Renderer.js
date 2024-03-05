@@ -38,7 +38,7 @@ export class VDomNodes {
     update() {
         const content = this.structure()
 
-        const node = document.querySelectorAll(`[data-VDomNodeID=${this.id}]`)[0]
+        const node = document.querySelectorAll(`[data-VDomNodeID="${this.id}"]`)[0]
 
         node.innerHTML = content
         registerEvent()
@@ -91,7 +91,9 @@ export class VDomNodes {
     }
 
 
+    
     // This method should be override by the user
+    afterLoad(){}
     structure() {}
 
 }
@@ -102,17 +104,16 @@ export class RootDOM {
     constructor() {
         this.root = document.createElement("div")
         this.root.setAttribute("id", "STARBASE_APP")
+        document.body.innerHTML = ""
+        document.body.appendChild(this.root)
     }
     
     render(node) {
-        // console.log("Hello");
-
         this.root.innerHTML = ""
         this.root.appendChild(node.render())
-
-        document.body.innerHTML = ""
-        document.body.appendChild(this.root)
         
         registerEvent()
+
+        node.afterLoad()
     }
 }
