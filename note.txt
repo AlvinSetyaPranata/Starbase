@@ -1,0 +1,4 @@
+TODO:
+- component parent should pass the parent element into the component for efficient
+  state update
+

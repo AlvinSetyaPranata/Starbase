@@ -1,119 +1,204 @@
-import { getTempVar, addTempVar } from "../Utils/Cache.js"
-import { generateRandom } from "../Utils/String.js"
+const tagNameExp = /(?<=<)[a-zA-Z]+(?=.*>)/g
+const openerTags = /<[a-zA-Z]*[^<]*>/g
+const attrExp = /[a-zA-Z]*=("|')\w+("|')/g
+const closerTags = /(?<=<\/)\w+(?=>)/g
+const contentExp = /(?<=<.*>)[^<>]*/g
 
-addTempVar("_sb_temp_events_", {})
+class Component {
+    constructor(name, props) {
+        this.componentType = name,
+        this.componentProps = {},
+        this.componentParent = null
+        this.componentElement = document.createElement(name)
+        this.componentDOMTree = {}
+        this.state = {}
 
-function registerEvent() {
-    const nodes = document.querySelectorAll("[data-VDomNodeID]")
-    const storage = getTempVar("_sb_temp_events_")
+        this.setParentUp(props)
+    }
 
-    nodes.forEach(element => {
-        const id = element.getAttribute("data-VDomNodeID")
+    setParentUp(props) {
+        Object.keys(props).forEach(propKey => {
+            if (propKey.startsWith("on")) {
+                this.setEventListener(this.componentElement, propKey.slice(2), props[propKey])
+            } else {
+                this.componentElement.setAttribute(propKey, props[propKey])
+                this.componentProps[propKey] = props[propKey]
+            }
 
-        if (!storage[id]) return
-
-        Object.entries(storage[id]).forEach(([keyEvent, callback]) => {
-            element.addEventListener(keyEvent, callback)
         })
-
-        delete storage[id]
-    })       
-}
-
-
-export class VDomNodes {
-    constructor(tag_name, attributes) {
-        this.state = 0
-        this.tag_name = tag_name
-        this.attributes = attributes
-        this.id = generateRandom(10)
-        this.element = document.createElement(this.tag_name)
-        this.storage = getTempVar('_sb_temp_events_')
-        this.setState = this.setState.bind(this)
-        this.element.setAttribute('data-VDomNodeID', this.id)
-        this.storage[this.id] = {}
     }
 
 
-    update() {
-        const content = this.structure()
-
-        const node = document.querySelectorAll(`[data-VDomNodeID="${this.id}"]`)[0]
-
-        node.innerHTML = content
-        registerEvent()
-
+    setEventListener(element, type, listener) {
+        element.addEventListener(type, listener)
     }
 
 
-    setState(newValue) {
-        this.state = newValue
-        this.update()
-    }
-    
-    
-    addListener(key, callback) {
-        if (!this.storage[this.id]) {
-            this.storage[this.id] = {}
-        }
+    isClosedTag(stringTag){
+        const closer = stringTag.match(closerTags)
 
-        this.storage[this.id][key] = callback
-    }
-
-
-    // Return node type
-    render() {
-        // Create a pre-render HTML element
-        let children = this.structure()
         
+        if (closer) return closer[0]
+        return
+    }
 
-        // Set all user specified attributes to the element
-        if (this.attributes) {
-            Object.entries(this.attributes).forEach(([attribute, value]) => {
-                if (attribute == "onclick") {
-                    this.addListener("click", value)
+
+    setAttr(element, attributes) {
+        if (!element || !attributes) return
+
+        attributes.map(attr => {
+            const splitedAttr = attr.split("=")
+
+            if (splitedAttr[0].startsWith("on")) {
+                element.addEventListener(splitedAttr[0], splitedAttr[1])
+            } else {
+                element.setAttribute(splitedAttr[0], splitedAttr[1])
+            }
+
+        })
+    }
+
+
+    identifiy(matchObj) {
+        const name = matchObj[0].match(tagNameExp)
+        const attributes = matchObj[0].match(attrExp)
+
+        const element = document.createElement(name)
+
+        this.setAttr(element, attributes)
+
+        if (!name) return this.isClosedTag(matchObj[0])
+
+        return {
+            name: name[0],
+            attributes: attributes,
+            startIndex: matchObj.index,
+            endIndex: 0,
+            length: matchObj[0].length,
+            element: element,
+            children: [],
+            state: {}
+        }
+    }
+
+
+    isElement(stringHTML) {
+        if (stringHTML.includes("<") | stringHTML.includes(">")) return true
+
+        return false
+    }
+
+    compile() {
+        
+        const stringHTML = this.structure()
+        const openerStages = []
+        const componentTree = []
+        let match    
+    
+    
+        while((match = openerTags.exec(stringHTML))) {
+            const objOrStr = this.identifiy(match)
+            
+            if (typeof objOrStr == "string") {
+                // Meaning it's close tag
+                const closeTagFirstIndex = match.index
+                
+                const openers = openerStages.pop()
+                openers.endIndex = closeTagFirstIndex + match[0].length
+    
+                const parentReference = openerStages[openerStages.length -1 ]
+                
+                const childrens = stringHTML.slice(openers.startIndex + openers.length, closeTagFirstIndex).trim()
+    
+                if (!this.isElement(childrens)) {            
+                    const textElement = document.createTextNode(childrens)
+                    openers.element.appendChild(textElement)
+                }             
+                // if undefiened then call append DOM tree
+                
+                if (parentReference) {
+                    const childrenLength = parentReference.children.length
+                    const siblingsNode = parentReference.children[childrenLength - 1]
+    
+                    if (childrenLength >= 1) {
+                        // Meaning have a siblings before
+    
+                        const childrenBefore = stringHTML.slice(siblingsNode.endIndex, openers.startIndex).trim()
+                        if (!this.isElement(childrenBefore) && childrenBefore != "") {
+                            const textElement2 = document.createTextNode(childrenBefore)
+                            parentReference.children.push(textElement2)
+                            parentReference.element.appendChild(textElement2)
+                        } 
+    
+                    } else {
+                        // Meaning have a siblings after
+                        // Append all non elements before the current element to the parent
+                        const childrenBefore = stringHTML.slice(parentReference.startIndex + parentReference.length, openers.startIndex).trim()
+                        if (!this.isElement(childrenBefore) && childrenBefore != "") {
+                            const textElement2 = document.createTextNode(childrenBefore)
+                            parentReference.children.push(textElement2)
+                            parentReference.element.appendChild(textElement2)
+                        } 
+                    }
+                    
+                    parentReference.children.push(openers)
+                    parentReference.element.appendChild(openers.element)
+    
+    
                 } else {
-                    this.element.setAttribute(attribute, value)
+    
+                    // Meaning it's a direct children of the component root element
+                    componentTree.push(openers)
                 }
     
-            })
+    
+            } else if ( typeof objOrStr == "object") {
+                // console.log(objOrStr);
+    
+                openerStages.push(objOrStr)
+            }
         }
-
-        // Append all child into element
-        this.element.innerHTML = children
-        return this.element
-    }
+            
+        componentTree.forEach(child => this.componentElement.appendChild(child.element))
     
-    // Return node as string
-    render_as_string() {
-        this.render()
-        return this.element.outerHTML.trim()    
+        this.componentDOMTree = {
+            type: this.componentType,
+            attributes: this.componentProps,
+            state: {},
+            children: componentTree,
+            element: this.componentElement
+        }
+    
     }
 
 
-    
-    // This method should be override by the user
-    afterLoad(){}
-    structure() {}
+    render(parentNode) {
+        // Required for re-render
+        this.componentParent = parentNode
+        parentNode.appendChild(this.componentElement)
+    }
 
+    // Methods to override
+    structure(){
+        return `
+        <div class="container" id="parent">
+            hello
+            <div class="child1">
+                <p>Alvin Setya Pranata</p>
+            </div>
+
+            This should be on root and between child1 and child2 element
+            
+            <div class="child2">
+                <p>12</p>
+            </div>
+        </div>
+        `
+    }
 }
 
 
 
-export class RootDOM {
-    constructor() {
-        this.root = document.createElement("div")
-        this.root.setAttribute("id", "STARBASE_APP")
-        document.body.innerHTML = ""
-        document.body.appendChild(this.root)
-    }
-    
-    render(node) {
-        this.root.innerHTML = ""
-        this.root.appendChild(node.render())
-        
-        registerEvent()
-
-        node.afterLoad()
-    }
-}
+const component = new Component("div", {class: "container", onclick: () => alert("Hello worlds")})
+component.compile()
+console.log(component)
