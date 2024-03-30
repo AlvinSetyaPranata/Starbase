@@ -42,11 +42,6 @@ export class Component {
         return
     }
 
-    isTextNode(stringHTML) {
-
-    }
-
-
     setAttr(element, attributes) {
         if (!element || !attributes) return
 
