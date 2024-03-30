@@ -1,10 +1,10 @@
 const tagNameExp = /(?<=<)[a-zA-Z]+(?=.*>)/g
-const openerTags = /<[a-zA-Z]*[^<]*>/g
+const openerTags = /<[a-zA-Z]*[^<]*>*/g
 const attrExp = /[a-zA-Z]*=("|')\w+("|')/g
 const closerTags = /(?<=<\/)\w+(?=>)/g
-const contentExp = /(?<=<.*>)[^<>]*/g
+// const contentExp = /(?<=<.*>)[^<>]*/g
 
-class Component {
+export class Component {
     constructor(name, props) {
         this.componentType = name,
         this.componentProps = {},
@@ -40,6 +40,10 @@ class Component {
         
         if (closer) return closer[0]
         return
+    }
+
+    isTextNode(stringHTML) {
+
     }
 
 
@@ -93,12 +97,14 @@ class Component {
         const stringHTML = this.structure()
         const openerStages = []
         const componentTree = []
-        let match    
-    
-    
+        let match            
+
+
+
         while((match = openerTags.exec(stringHTML))) {
             const objOrStr = this.identifiy(match)
             
+
             if (typeof objOrStr == "string") {
                 // Meaning it's close tag
                 const closeTagFirstIndex = match.index
@@ -158,7 +164,13 @@ class Component {
                 openerStages.push(objOrStr)
             }
         }
-            
+
+        if (componentTree.length == 0 && stringHTML.length > 0) {
+            const textNode = document.createTextNode(stringHTML)
+            this.componentElement.appendChild(textNode)
+            return
+        }
+
         componentTree.forEach(child => this.componentElement.appendChild(child.element))
     
         this.componentDOMTree = {
@@ -179,20 +191,24 @@ class Component {
     }
 
     // Methods to override
-    structure(){
-        return `
-        <div class="container" id="parent">
-            hello
-            <div class="child1">
-                <p>Alvin Setya Pranata</p>
-            </div>
+    structure(){}
+}
 
-            This should be on root and between child1 and child2 element
-            
-            <div class="child2">
-                <p>12</p>
-            </div>
-        </div>
-        `
+
+export class createRootDOM {
+    constructor(parent) {
+        this.parent = parent
+        this.element = document.createElement("div")
+        this.setup()
+    }
+
+    setup() {
+        this.element.setAttribute("id", "STARBASE_APP")
+    }
+
+
+    render(child) {
+        this.element.appendChild(child)
+        this.parent.appendChild(this.element)
     }
 }
