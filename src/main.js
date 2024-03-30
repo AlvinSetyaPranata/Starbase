@@ -1,35 +1,9 @@
-// Router tester
-
-// import Router from "../app/Router/RouterHandler.js"
-// import Home from "./pages/Home.js"
-// import About from "./pages/About.js"
-// import Detail from "./pages/Detail.js"
-
-// const routes = {
-//     "/": {title: "Home", element: Home},
-//     "/about": {title: "about", element: About},
-//     "/detail/:id": {title: "detail", element: Detail},
-// }
-
-// export const route = new Router(routes)
+import { Link } from "./components/Link.js"
 
 
+const root = document.getElementById("STARBASE_APP")
+const link = new Link()
 
-// Engine tester
+link.compile()
 
-import {RootDOM} from "../app/Core/Renderer.js"
-import Router from "../app/Router/RouterHandler.js"
-import About from "./pages/renderer-page/About.js"
-import Home from "./pages/renderer-page/Home.js"
-
-const routes = {
-    "/": {title: "Homespasd", element: new Home()},
-    "/about": {title: "about", element: new About()},
-}
-
-
-
-// Don't modify code bellow !
-export const app = new RootDOM()
-export const route = new Router(routes, app)
-
+link.render(root)

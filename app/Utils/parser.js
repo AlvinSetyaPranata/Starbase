@@ -174,3 +174,4 @@ function structVDOM(type, stringHTML) {
     }
 
 }
+

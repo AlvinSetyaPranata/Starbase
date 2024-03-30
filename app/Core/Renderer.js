@@ -4,7 +4,7 @@ const attrExp = /[a-zA-Z]*=("|')\w+("|')/g
 const closerTags = /(?<=<\/)\w+(?=>)/g
 const contentExp = /(?<=<.*>)[^<>]*/g
 
-class Component {
+export class Component {
     constructor(name, props) {
         this.componentType = name,
         this.componentProps = {},
@@ -179,26 +179,24 @@ class Component {
     }
 
     // Methods to override
-    structure(){
-        return `
-        <div class="container" id="parent">
-            hello
-            <div class="child1">
-                <p>Alvin Setya Pranata</p>
-            </div>
-
-            This should be on root and between child1 and child2 element
-            
-            <div class="child2">
-                <p>12</p>
-            </div>
-        </div>
-        `
-    }
+    structure(){}
 }
 
 
+export class createRootDOM {
+    constructor(parent) {
+        this.parent = parent
+        this.element = document.createElement("div")
+        this.setup()
+    }
 
-const component = new Component("div", {class: "container", onclick: () => alert("Hello worlds")})
-component.compile()
-console.log(component)
+    setup() {
+        this.element.setAttribute("id", "STARBASE_APP")
+    }
+
+
+    render(child) {
+        this.element.appendChild(child)
+        this.parent.appendChild(this.element)
+    }
+}
