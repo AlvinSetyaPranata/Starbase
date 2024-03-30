@@ -19,16 +19,17 @@
 
 import {RootDOM} from "../app/Core/Renderer.js"
 import Router from "../app/Router/RouterHandler.js"
-import { addTempVar } from "../app/Utils/Cache.js"
 import About from "./pages/renderer-page/About.js"
 import Home from "./pages/renderer-page/Home.js"
 
 const routes = {
-    "/": {title: "Home", element: new Home()},
+    "/": {title: "Homespasd", element: new Home()},
     "/about": {title: "about", element: new About()},
 }
 
 
+
+// Don't modify code bellow !
 export const app = new RootDOM()
 export const route = new Router(routes, app)
 

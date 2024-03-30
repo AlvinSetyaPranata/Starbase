@@ -1,1 +1,4 @@
 testing.js
+test.js
+**/node_modules
+**/*/yarn.lock
