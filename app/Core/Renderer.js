@@ -196,9 +196,3 @@ class Component {
         `
     }
 }
-
-
-
-const component = new Component("div", {class: "container", onclick: () => alert("Hello worlds")})
-component.compile()
-console.log(component)
