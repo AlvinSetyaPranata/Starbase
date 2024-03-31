@@ -17,6 +17,21 @@ export class Component {
         this.setParentUp(props)
     }
 
+
+    extractAttributes(vdomObject) {
+        if (!vdomObject.attributes) return
+
+        vdomObject.attributes.map((attrStr) => {
+            const splitedAttribute = attrStr.split("=")
+
+            if (splitedAttribute[0].startsWith("on")) {
+                this.setEventListener(vdomObject.element, splitedAttribute[0], splitedAttribute[1])
+            } else {
+                vdomObject.element.setAttribute(splitedAttribute[0], splitedAttribute[1])
+            }
+        })
+    } 
+
     setParentUp(props) {
         Object.keys(props).forEach(propKey => {
             if (propKey.startsWith("on")) {
@@ -67,6 +82,8 @@ export class Component {
     identifiy(matchObj) {
         const name = matchObj[0].match(tagNameExp)
         const attributes = matchObj[0].match(attrExp)
+
+        console.log(matchObj[0]);
 
         const element = document.createElement(name)
 
@@ -145,6 +162,8 @@ export class Component {
                             parentReference.element.appendChild(textElement2)
                         } 
                     }
+
+                    this.extractAttributes(openers)
                     
                     parentReference.children.push(openers)
                     parentReference.element.appendChild(openers.element)

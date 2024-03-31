@@ -10,7 +10,7 @@ export class Link extends Component {
     structure() {
         return `
         <div>
-            <p>Hello me</p>
+            <p class="header" onclick=${() => alert('hle')}>Hello me</p>
             <div>
                 <p>Hello you</p>
             </div>
