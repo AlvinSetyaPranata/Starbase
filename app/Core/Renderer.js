@@ -158,6 +158,12 @@ export class Component {
                 openerStages.push(objOrStr)
             }
         }
+
+        if (componentTree.length == 0 && stringHTML.length > 0) {
+            // There are no element found but found a text
+            const textNode = document.createTextNode(stringHTML)
+            this.componentElement.appendChild(textNode)
+        }
             
         componentTree.forEach(child => this.componentElement.appendChild(child.element))
     
