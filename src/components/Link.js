@@ -8,6 +8,13 @@ export class Link extends Component {
 
 
     structure() {
-        return `Hello worlds`
+        return `
+        <div>
+            <p>Hello me</p>
+            <div>
+                <p>Hello you</p>
+            </div>
+                <input type='text' />
+        </div>`
     }
 }

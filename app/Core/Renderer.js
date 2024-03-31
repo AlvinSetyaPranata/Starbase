@@ -3,6 +3,7 @@ const openerTags = /<[a-zA-Z]*[^<]*>/g
 const attrExp = /[a-zA-Z]*=("|')\w+("|')/g
 const closerTags = /(?<=<\/)\w+(?=>)/g
 const contentExp = /(?<=<.*>)[^<>]*/g
+const singleTagExp =  /<[a-zA-Z]*[^<]*\/>/g
 
 export class Component {
     constructor(name, props) {
@@ -42,6 +43,10 @@ export class Component {
         return
     }
 
+    isSingleTag(stringTag){
+        return stringTag.match(singleTagExp)
+    }
+
 
     setAttr(element, attributes) {
         if (!element || !attributes) return
@@ -79,6 +84,7 @@ export class Component {
             children: [],
             state: {}
         }
+
     }
 
 
@@ -98,7 +104,7 @@ export class Component {
     
         while((match = openerTags.exec(stringHTML))) {
             const objOrStr = this.identifiy(match)
-            
+
             if (typeof objOrStr == "string") {
                 // Meaning it's close tag
                 const closeTagFirstIndex = match.index
@@ -106,15 +112,14 @@ export class Component {
                 const openers = openerStages.pop()
                 openers.endIndex = closeTagFirstIndex + match[0].length
     
-                const parentReference = openerStages[openerStages.length -1 ]
                 
                 const childrens = stringHTML.slice(openers.startIndex + openers.length, closeTagFirstIndex).trim()
-    
+                
                 if (!this.isElement(childrens)) {            
                     const textElement = document.createTextNode(childrens)
                     openers.element.appendChild(textElement)
                 }             
-                // if undefiened then call append DOM tree
+                const parentReference = openerStages[openerStages.length -1 ]
                 
                 if (parentReference) {
                     const childrenLength = parentReference.children.length
@@ -153,8 +158,47 @@ export class Component {
     
     
             } else if ( typeof objOrStr == "object") {
-                // console.log(objOrStr);
-    
+                
+                if (this.isSingleTag(match[0])) {
+                    const parentReference = openerStages[openerStages.length - 1]
+
+                    if (parentReference) {
+                        const childrenLength = parentReference.children.length
+                        const siblingsNode = parentReference.children[childrenLength - 1]
+        
+                        if (childrenLength >= 1) {
+                            // Meaning have a siblings before
+        
+                            const childrenBefore = stringHTML.slice(siblingsNode.endIndex, objOrStr.startIndex).trim()
+                            if (!this.isElement(childrenBefore) && childrenBefore != "") {
+                                const textElement2 = document.createTextNode(childrenBefore)
+                                parentReference.children.push(textElement2)
+                                parentReference.element.appendChild(textElement2)
+                            } 
+        
+                        } else {
+                            // Meaning have a siblings after
+                            // Append all non elements before the current element to the parent
+                            const childrenBefore = stringHTML.slice(parentReference.startIndex + parentReference.length, objOrStr.startIndex).trim()
+                            if (!this.isElement(childrenBefore) && childrenBefore != "") {
+                                const textElement2 = document.createTextNode(childrenBefore)
+                                parentReference.children.push(textElement2)
+                                parentReference.element.appendChild(textElement2)
+                            } 
+                        }
+                        
+                        parentReference.children.push(objOrStr)
+                        parentReference.element.appendChild(objOrStr.element)
+        
+        
+                    } else {
+        
+                        // Meaning it's a direct children of the component root element
+                        componentTree.push(objOrStr)
+                    }
+                    continue
+                }
+
                 openerStages.push(objOrStr)
             }
         }
